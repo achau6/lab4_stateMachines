@@ -10,6 +10,7 @@
 #include <avr/io.h>
 #ifdef _SIMULATE_
 #include "simAVRHeader.h"
+#include <stdbool.h>
 #endif
 
 int main(void) {
@@ -18,15 +19,20 @@ int main(void) {
 	DDRB = 0xFF; PORTB = 0x00;
 	unsigned char tmpA = 0x00;
 	unsigned char state = 0x01; //button starts at 1
+	bool hold = false;
     /* Insert your solution below */
     while (1) {
 	//tmpB = 0x01;
 	tmpA = PINA & 0x01;
-	if((tmpA == 0x01) && (state == 0x01)) { //if button B0 is one then B0 = 2
-		state = 0x02;	
-	} else if((tmpA == 0x01) && (state == 0x02)){ //if button B0 = 2 then B0 = 1
+	if((tmpA == 0x01) && (state == 0x01) && (hold == false)) { //if button B0 is one then B0 = 2
+		state = 0x02;
+		hold = true;	
+	} else if((tmpA == 0x01) && (state == 0x02) && (hold == false)){ //if button B0 = 2 then B0 = 1
 		state = 0x01;
-	} else{}
+		hold = true;
+	} else if(tmpA == 0x00){
+		hold = false;
+	}
 	PORTB = state;
 
     }
