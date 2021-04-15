@@ -17,17 +17,17 @@ int main(void) {
 	DDRA = 0x00; PORTA = 0xFF;
 	DDRB = 0xFF; PORTB = 0x00;
 	unsigned char tmpA = 0x00;
-	unsigned char tmpB = 0x01; //button starts at 1
+	unsigned char state = 0x01; //button starts at 1
     /* Insert your solution below */
     while (1) {
-	//tmpA = 0x00;
-	tmpA = PINA;
-	if((tmpA == 0x01) && (tmpB == 0x01)) { //if button B0 is one then B0 = 2
-		tmpB = 0x02;	
-	} else if((tmpA == 0x01) && (tmpB == 0x02)){ //if button B0 = 2 then B0 = 1
-		tmpB = 0x01;
-	} else {}
-	PORTB = tmpB;
+	//tmpB = 0x01;
+	tmpA = PINA & 0x01;
+	if((tmpA == 0x01) && (state == 0x01)) { //if button B0 is one then B0 = 2
+		state = 0x02;	
+	} else if((tmpA == 0x01) && (state == 0x02)){ //if button B0 = 2 then B0 = 1
+		state = 0x01;
+	} else{}
+	PORTB = state;
 
     }
     return 1;
