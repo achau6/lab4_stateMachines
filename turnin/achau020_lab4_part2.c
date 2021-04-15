@@ -40,9 +40,13 @@ int main(void) {
 
 	if(hold1 == true && hold2 == true){ //if 1 and 2 are pressed at 2 different times
 		value = 0x00;
+		hold1 = false;
+		hold2 = false;
 	}
 	if(tmpA == 0x03){ //if 1 and 2 are press go to 0
 		value = 0x00;
+		hold1 = false;
+		hold2 = false;
 	}
 	PORTC = value;
 
