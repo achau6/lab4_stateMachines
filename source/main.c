@@ -27,7 +27,7 @@ int main(void) {
 	tmpA = PINA;
 	// x = 00, y = 0x01, # = 0x02
 	if(tmpA == 0x04 && reset == false){ //need false to press once and release
-		tmpC = 0x03;
+		tmpC = 0x03; //rendom assign value
 		hold1 = true;
 		reset = true;
 	}else if(tmpA == 0x02 && reset == false){
@@ -40,13 +40,13 @@ int main(void) {
 		hold1 = false; //press any other button then combo is ruined
 		hold2 = false;
 	} else if(tmpA == 0x00){//reset
-		tmpC = 0x06;
 		reset = false;
 	} else if(tmpA = 0x07){ //combo is gone
 		tmpC = 0x00;
 		reset = true;
 		hold1 = false;
                 hold2 = false;
+		reset = false;
 	}else {
 		tmpC = 0x08; //reset value
 	}
@@ -55,6 +55,7 @@ int main(void) {
 		tmpC = 0x01;
 		hold1 = false;
                 hold2 = false;
+		reset = false;
 	}
 	PORTC = tmpC;
 
