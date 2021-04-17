@@ -18,7 +18,7 @@ int main(void) {
 	DDRA = 0x00; PORTA = 0xFF;
 	DDRB = 0xFF; PORTB = 0x00;
 	unsigned char tmpA = 0x00;
-	unsigned char tmpC = 0x08;
+	unsigned char tmpC = 0x00;
 	bool hold1 = false;
 	bool hold2 = false;
 	bool reset = false;
@@ -26,20 +26,35 @@ int main(void) {
     while (1) {
 	tmpA = PINA;
 	// x = 00, y = 0x01, # = 0x02
-	if(tmpA == 0x04 && reset == false){ //need false to press once and release
-		tmpC = 0x03; //rendom assign value
-		hold1 = true;
-		reset = true;
-	}else if(tmpA == 0x02 && reset == false){
-		tmpC = 0x04;
-		hold2 = true;
-		reset = true;
+	if(tmpA == 0x04){ //need false to press once and release
+		//tmpC = 0x03; //rendom assign value
+		if(reset == false){
+                        hold1 = true;
+                        reset = true;
+                } else if(reset == true){
+                        //hold2 = false;
+                        reset = false;
+                }
+		//hold1 = true;
+		//reset = true;
+	}else if(tmpA == 0x02){
+		//tmpC = 0x04;
+		if(reset == false){
+			hold2 = true;
+                	reset = true;
+		} else if(reset == true){
+			//hold2 = false;
+			reset = false;
+		}
+		//hold2 = true;
+		//reset = true;
 	} else if(tmpA == 0x01){
-		tmpC = 0x05;
+		//tmpC = 0x05;
 		reset = true;
 		hold1 = false; //press any other button then combo is ruined
 		hold2 = false;
 	} else if(tmpA == 0x00){//reset
+		tmpC = 0x00;
 		reset = false;
 	} else if(tmpA = 0x07){ //combo is gone
 		tmpC = 0x00;
@@ -55,7 +70,7 @@ int main(void) {
 		tmpC = 0x01;
 		hold1 = false;
                 hold2 = false;
-		reset = false;
+		//reset = false;
 	}
 	PORTB = tmpC;
 
