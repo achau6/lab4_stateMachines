@@ -48,7 +48,7 @@ int main(void) {
                 hold2 = false;
 		reset = false;
 	}else {
-		tmpC = 0x08; //reset value
+		//tmpC = 0x08; //reset value
 	}
 
 	if(hold1 == true && hold2 == true){
