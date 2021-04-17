@@ -16,7 +16,7 @@
 int main(void) {
     /* Insert DDR and PORT initializations */
 	DDRA = 0x00; PORTA = 0xFF;
-	DDRC = 0xFF; PORTC = 0x00;
+	DDRB = 0xFF; PORTB = 0x00;
 	unsigned char tmpA = 0x00;
 	unsigned char tmpC = 0x08;
 	bool hold1 = false;
@@ -57,7 +57,7 @@ int main(void) {
                 hold2 = false;
 		reset = false;
 	}
-	PORTC = tmpC;
+	PORTB = tmpC;
 
     }
     return 1;
