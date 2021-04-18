@@ -13,42 +13,56 @@
 #include <stdbool.h>
 #endif
 
-unsigned char B;
-enum SM1_STATES { SM1_SMStart, SM_Pound, SM_Y, SM_X, SM_Lock, SM_Unlock, SM_Wait } SM_STATE
 
-void Tick_Door(unsigned char tmpA) {
+enum SM1_STATES { SM1_SMStart, Init, SM_Pound, SM_Y, SM_X, SM_Lock, SM_Unlock } SM_STATE;
+
+void Tick_Door() {
 	switch(SM_STATE) {
 		case SM1_SMStart:
-		SM_STATE = SM_Lock;
-		case SM_Wait:
-		SM_STATE = SM_Lock;
+			SM_STATE = Init;
+		break;
+		case Init:
+			if(PINA == 0x04){
+                                SM_STATE = SM_Pound;
+                        //} else if(A == 0x02){
+                        //         SM_STATE = SM_Y;
+                        //} else if(A == 0x01){
+                        //        SM_STATE = SM_X;
+                        } else if(PINA == 0x07){
+                                SM_STATE = SM_Lock;
+                        } else { SM_STATE = Init; }
+		break;
 		case SM_Pound:
-			if(tmpA == 0x04){
+			if(PINA == 0x04){
+				SM_STATE = SM_Pound;
+			} else { 
 				SM_STATE = SM_Y;
-			} else { SM_STATE = SM_Lock; }
+			}
 		break;
 		case SM_Y:
-			if(tmpA == 0x02){
+			if(PINA == 0x02){
 				SM_STATE = SM_Unlock;
-			} else { SM_STATE == SM_Lock; }
+			} else if(PINA == 0x00) {
+				SM_STATE = SM_Y;
+			} else {	
+				SM_STATE = Init;
+			}
 		break;
 		case SM_X:
 			SM_STATE = SM_Lock;
 		break;
 		case SM_Lock:
-			if(tmpA == 0x04){
-                                SM_STATE = SM_Y;
-                        } else if(tmpA == 0x02){
-				 SM_STATE = SM_Lock;
-			} else if(tmpA == 0x01){
-				SM_STATE = SM_X;
-			} else if(tmpA == 0x07){
+			if(PINA == 0x07){
 				SM_STATE = SM_Lock;
-			}
+			} else { SM_STATE = Init; }
 
 		break;
 		case SM_Unlock:
-			//SM_STATE = SM_Lock;
+			if(PINA == 0x02){
+                                SM_STATE = SM_Unlock;
+                        } else {
+                                SM_STATE = Init;
+                        }
 		break;
 		
 		default:
@@ -58,45 +72,48 @@ void Tick_Door(unsigned char tmpA) {
 
 	switch(SM_STATE){
 		case SM1_SMStart:
+			PORTB = 0x00;
 		break;
 		case SM_Lock:
-			B = 0x00;
+			PORTB = 0x00;
+		break;
+		case Init:
 		break;
 		case SM_Y:
 		break;
 		case SM_X:
 		break;
 		case SM_Unlock:
-			B = 0x01;
+			PORTB = 0x01;
 		break;
 		case SM_Pound:
 		break;
 	
 	}
 
-
 }
 int main(void) {
     /* Insert DDR and PORT initializations */
 	DDRA = 0x00; PORTA = 0xFF;
 	DDRB = 0xFF; PORTB = 0x00;
-	unsigned char tmpA = 0x00;
-	unsigned char tmpC = 0x00;
-	bool hold1 = false;
-	bool hold2 = false;
-	bool reset = false;
-	B = 0;
-	SM_STATE = SM1_SMStart;
+	//unsigned char tmpA = 0x00;
+	//unsigned char tmpC = 0x00;
+	//bool hold1 = false;
+	//bool hold2 = false;
+	//bool reset = false;
+	//B = 0;
+	//SM_STATE = SM1_SMStart;
     /* Insert your solution below */
     while (1) {
-	tmpA = PINA;
-	Tick_Door(tmpA);
+	//tmpA = PINA;
+	//can ignore X since we dont need it for success
+	Tick_Door();
 	//hold1 = false;
 	//hold2 = false;
 	//reset = false;
 	// x = 00, y = 0x01, # = 0x02
 	/*if(tmpA == 0x04 && reset == false){ //need false to press once and release
-		//tmpC = 0x03; //rendom assign value
+		tmpC = 0x00; //rendom assign value
 		//if(reset == false){
                         hold1 = true;
                         reset = true;
@@ -106,8 +123,8 @@ int main(void) {
                 //}
 		//hold1 = true;
 		//reset = true;
-	}else if(tmpA == 0x02 && reset == false){
-		//tmpC = 0x04;
+	} else if(tmpA == 0x02 && reset == false){
+		tmpC = 0x00;
 		//if(reset == false){
 			hold2 = true;
                 	reset = true;
@@ -132,7 +149,7 @@ int main(void) {
                 hold2 = false;
 		//reset = false;
 	}else {
-		//tmpC = 0x08; //reset value
+		tmpC = 0x00; //reset value
 	}
 
 	if(hold1 == true && hold2 == true){
@@ -141,7 +158,7 @@ int main(void) {
                 hold2 = false;
 		reset = false;
 	}*/
-	PORTB = tmpC;
+	//PORTB = tmpC;
 
     }
     return 1;
