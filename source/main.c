@@ -15,7 +15,7 @@
 
 
 enum SM1_STATES { SM1_SMStart, Init, SM_Pound, SM_Y, SM_Lock, SM_Unlock } SM_STATE;
-bool lock;
+bool lock = false;
 
 void Tick_Door() {
 	//PORTB = 0x00;
@@ -75,6 +75,7 @@ void Tick_Door() {
 		case SM_Unlock:
 			if(PINA == 0x02){
                                 SM_STATE = SM_Unlock;
+				//lock = false;
 				
                         } else {
                                 SM_STATE = Init;
@@ -102,14 +103,15 @@ void Tick_Door() {
 		//case SM_X:
 		//break;
 		case SM_Unlock:
-			if(lock == true){
-				lock = false;
-				PORTB = 0x01;
-				
-			} else {
+			if(lock == false){
 				lock = true;
+				PORTB = 0x01;
+				SM_STATE = Init;
+				
+			} else if(lock == true){
+				lock = false;
 				PORTB = 0x00;
-				//SM_STATE = SM_Lock;
+				SM_STATE = Init;
 			}
 		break;
 		case SM_Pound:
