@@ -14,7 +14,7 @@
 #endif
 
 
-enum SM1_STATES { SM1_SMStart, Init, SM_Pound, SM_Y, SM_X, SM_Lock, SM_Unlock } SM_STATE;
+enum SM1_STATES { SM1_SMStart, Init, SM_Pound, SM_Y, SM_Lock, SM_Unlock } SM_STATE;
 
 void Tick_Door() {
 	//PORTB = 0x00;
@@ -30,9 +30,12 @@ void Tick_Door() {
                         //         SM_STATE = SM_Y;
                         //} else if(A == 0x01){
                         //        SM_STATE = SM_X;
-                        } else if(PINA == 0x07){
+                        } else if(PINA == 0x80){
                                 SM_STATE = SM_Lock;
-                        } else { SM_STATE = Init; }
+                        } else { 
+				//PORTB = 0x00;
+				SM_STATE = Init; 
+			}
 		break;
 		case SM_Pound:
 			if(PINA == 0x04){
@@ -50,11 +53,11 @@ void Tick_Door() {
 				SM_STATE = Init;
 			}
 		break;
-		case SM_X:
-			SM_STATE = SM_Lock;
-		break;
+		//case SM_X:
+			//SM_STATE = SM_Lock;
+		//break;
 		case SM_Lock:
-			if(PINA == 0x07){
+			if(PINA == 0x80){
 				SM_STATE = SM_Lock;
 			} else { SM_STATE = Init; }
 
@@ -67,9 +70,9 @@ void Tick_Door() {
                         }
 		break;
 		
-		default:
-			SM_STATE = SM1_SMStart;
-		break;
+		//default:
+		//	SM_STATE = SM1_SMStart;
+		//break;
 	}
 
 	switch(SM_STATE){
@@ -84,8 +87,8 @@ void Tick_Door() {
 		break;
 		case SM_Y:
 		break;
-		case SM_X:
-		break;
+		//case SM_X:
+		//break;
 		case SM_Unlock:
 			PORTB = 0x01;
 		break;
