@@ -18,14 +18,13 @@ enum SM1_STATES { SM1_SMStart, Init, SM_Pound, SM_Y, SM_Lock, SM_Unlock } SM_STA
 
 void Tick_Door() {
 	//PORTB = 0x00;
-	bool reset = false;
+	bool reset;
 	switch(SM_STATE) {
 		case SM1_SMStart:
 			//PORTB = 0x00;
 			SM_STATE = Init;
 		break;
 		case Init:
-			reset = false;
 			if(PINA == 0x04){
                                 SM_STATE = SM_Pound;
                         //} else if(A == 0x02){
@@ -35,28 +34,29 @@ void Tick_Door() {
                         } else if(PINA == 0x80){
                                 SM_STATE = SM_Lock;
                         } else { 
-				//PORTB = 0x00;
 				SM_STATE = Init; 
 			}
 		break;
 		case SM_Pound:
 			if(PINA == 0x04){
 				SM_STATE = SM_Pound;
-			} else { 
-				SM_STATE = SM_Y;
+			} else if(PINA == 0x02) {
+				//PORTB = 0x00;
 				reset = true;
+			} else{ 
+				SM_STATE = SM_Y;
 			}
 		break;
 		case SM_Y:
-			if(PINA == 0x02){ 
+			if(PINA == 0x02){
 				if(reset == false) {
 					SM_STATE = SM_Unlock;
 				} else {
-					SM_STATE = SM_Lock;
+					PORTB = 0x00;
+					//SM_STATE = SM_Lock;	
 				}
 			} else if(PINA == 0x00) {
 				SM_STATE = SM_Y;
-				reset = false;
 			} else {	
 				SM_STATE = Init;
 			}
@@ -89,18 +89,22 @@ void Tick_Door() {
 		break;
 		case SM_Lock:
 			PORTB = 0x00;
+			SM_STATE = Init;
 		break;
 		case Init:
 			//PORTB = 0x00;
 		break;
 		case SM_Y:
+			//PORTB = 0x00;
 		break;
 		//case SM_X:
 		//break;
 		case SM_Unlock:
 			PORTB = 0x01;
+			SM_STATE = Init;
 		break;
 		case SM_Pound:
+			//PORTB = 0x00;
 		break;
 	
 	}
@@ -113,7 +117,7 @@ int main(void) {
 	//unsigned char tmpA = 0x00;
 	//unsigned char tmpC = 0x00;
 	//B = 0;
-	//SM_STATE = SM1_SMStart;
+	SM_STATE = SM1_SMStart;
     /* Insert your solution below */
 	//PORTB = 0x00;
     while (1) {
