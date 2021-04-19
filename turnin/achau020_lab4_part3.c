@@ -18,12 +18,14 @@ enum SM1_STATES { SM1_SMStart, Init, SM_Pound, SM_Y, SM_Lock, SM_Unlock } SM_STA
 
 void Tick_Door() {
 	//PORTB = 0x00;
+	bool reset = false;
 	switch(SM_STATE) {
 		case SM1_SMStart:
 			//PORTB = 0x00;
 			SM_STATE = Init;
 		break;
 		case Init:
+			reset = false;
 			if(PINA == 0x04){
                                 SM_STATE = SM_Pound;
                         //} else if(A == 0x02){
@@ -42,13 +44,19 @@ void Tick_Door() {
 				SM_STATE = SM_Pound;
 			} else { 
 				SM_STATE = SM_Y;
+				reset = true;
 			}
 		break;
 		case SM_Y:
-			if(PINA == 0x02){
-				SM_STATE = SM_Unlock;
+			if(PINA == 0x02){ 
+				if(reset == false) {
+					SM_STATE = SM_Unlock;
+				} else {
+					SM_STATE = SM_Lock;
+				}
 			} else if(PINA == 0x00) {
 				SM_STATE = SM_Y;
+				reset = false;
 			} else {	
 				SM_STATE = Init;
 			}
